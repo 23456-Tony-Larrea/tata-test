@@ -1,12 +1,19 @@
 package Tata.backend.src.service;
 
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import Tata.backend.src.dto.ReporteRequestDTO;
+import Tata.backend.src.entity.Cuenta;
 import Tata.backend.src.entity.Movimientos;
+import Tata.backend.src.exception.SaldoNoDisponibleException;
+import Tata.backend.src.repository.CuentaRepository;
 import Tata.backend.src.repository.MovimientosRepository;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -14,6 +21,9 @@ public class MovimientoService {
 
     @Autowired
     private MovimientosRepository movimientoRepository;
+
+    @Autowired
+    private CuentaRepository cuentaRepository;
 
     public List<Movimientos> getAllMovimientos() {
         return movimientoRepository.findAll();
@@ -25,7 +35,22 @@ public class MovimientoService {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    public Movimientos createMovimiento(Movimientos movimiento) {
+    @Transactional
+    public Movimientos createMovimiento(Long cuentaId, Movimientos movimiento) {
+        Cuenta cuenta = cuentaRepository.findById(cuentaId)
+                .orElseThrow(() -> new RuntimeException("Cuenta no encontrada"));
+
+        double nuevoSaldo = cuenta.getSaldoInicial() + movimiento.getValor();
+        if (nuevoSaldo < 0) {
+            throw new SaldoNoDisponibleException("Saldo no disponible");
+        }
+
+        cuenta.setSaldoInicial(nuevoSaldo);
+        cuentaRepository.save(cuenta);
+
+        movimiento.setFecha(new Date());
+        movimiento.setSaldo(nuevoSaldo);
+        movimiento.setCuenta(cuenta);
         return movimientoRepository.save(movimiento);
     }
 
@@ -44,5 +69,9 @@ public class MovimientoService {
     public void deleteMovimiento(Long id) {
        movimientoRepository.deleteById(id);
     }
-
+    @RabbitListener(queues = "cliente-cuenta-queue")
+    public void receiveMessage(ReporteRequestDTO cliente) {
+        // Procesar el cliente recibido y realizar las acciones necesarias
+        System.out.println("Received message: " + cliente);
+    }   
 }

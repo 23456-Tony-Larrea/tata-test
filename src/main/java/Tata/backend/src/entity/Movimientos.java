@@ -1,8 +1,9 @@
 package Tata.backend.src.entity;
 
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import java.util.Date;
 
 @Data
 @Entity
@@ -15,4 +16,9 @@ public class Movimientos {
     private String tipoMovimiento;
     private double valor;
     private double saldo;
+
+    @ManyToOne
+    @JoinColumn(name = "cuenta_id")
+    @JsonIgnore
+    private Cuenta cuenta;
 }
