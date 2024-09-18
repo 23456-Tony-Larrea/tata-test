@@ -1,6 +1,8 @@
 package Tata.backend.src.service;
 
 import Tata.backend.src.entity.Cliente;
+import Tata.backend.src.Repository.ClienteRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +14,7 @@ import java.util.UUID;
 public class ClienteService {
 
     @Autowired
-    private Tata.backend.src.Repository.ClienteRepository clienteRepository;
+    private ClienteRepository clienteRepository;
 
     public List<Cliente> findAll() {
         return clienteRepository.findAll();
