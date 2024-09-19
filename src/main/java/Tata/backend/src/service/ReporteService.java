@@ -21,6 +21,7 @@ public class ReporteService {
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
+
     @Transactional
     public ReporteEstadoCuentaDTO generarReporteEstadoCuenta(String clienteNombre, Date fechaInicio, Date fechaFin, List<ReporteRequestDTO.CuentaDTO> cuentas) {
         ReporteEstadoCuentaDTO reporte = new ReporteEstadoCuentaDTO();
@@ -54,12 +55,15 @@ public class ReporteService {
 
     @RabbitListener(queues = "reporte-queue")
     public void receiveMessage(ReporteRequestDTO request) {
-        // Procesar el mensaje recibido y generar el reporte
         ReporteEstadoCuentaDTO reporte = generarReporteEstadoCuenta(request.getClienteNombre(), request.getFechaInicio(), request.getFechaFin(), request.getCuentas());
-        // Aquí puedes enviar el reporte a otro servicio, guardar en base de datos, etc.
         System.out.println("Reporte generado: " + reporte);
     }
-      public void solicitarReporte(ReporteRequestDTO request) {
+
+    public void solicitarReporte(ReporteRequestDTO request) {
         rabbitTemplate.convertAndSend(RabbitMQConfig.QUEUE_NAME, request);
+    }
+
+    public List<ReporteRequestDTO.CuentaDTO> obtenerCuentasDelCliente(String clienteNombre) {
+        return List.of();
     }
 }

@@ -71,7 +71,6 @@ public class MovimientoService {
     }
     @RabbitListener(queues = "cliente-cuenta-queue")
     public void receiveMessage(ReporteRequestDTO cliente) {
-        // Procesar el cliente recibido y realizar las acciones necesarias
         System.out.println("Received message: " + cliente);
     }   
 }

@@ -10,7 +10,6 @@ public class ReporteRequestDTO {
     private Date fechaFin;
     private List<CuentaDTO> cuentas;
 
-    // Getters y Setters
     public Long getClienteId() {
         return clienteId;
     }
@@ -58,7 +57,6 @@ public class ReporteRequestDTO {
         private boolean estado;
         private List<MovimientoDTO> movimientos;
 
-        // Getters y Setters
         public String getNumeroCuenta() {
             return numeroCuenta;
         }
@@ -106,7 +104,6 @@ public class ReporteRequestDTO {
         private double valor;
         private double saldo;
 
-        // Getters y Setters
         public Date getFecha() {
             return fecha;
         }
