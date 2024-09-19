@@ -5,13 +5,11 @@ import jakarta.persistence.Entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.io.Serializable;
 
 @Data
 @Entity
 @EqualsAndHashCode(callSuper = true)
-public class Cliente extends Persona implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class Cliente extends Persona  {
 
     @Column(nullable = true)
     private String clienteId;
